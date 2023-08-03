@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { styled, createGlobalStyle, ThemeProvider } from "styled-components";
 import { Main, List, Info } from "./Pages/index";
-import theme from "./Assets/styles/theme";
+import theme from "./Assets/Styles/theme";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 

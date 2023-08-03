@@ -13,7 +13,7 @@ let pageNo = 1;
 // &_type=json / 응답형태 (기본 xml 또는 json)
 const typeJson = `&_type=json`;
 
-// 1. 시도 조회 => 선택된 uprCd 상태 변경하기
+// 1. 시도 조회 => 선택된 uprCd 상태 변경해서 시군구 검색에 넘겨주기
 let searchLocation = "/sido";
 
 const searchSido = () => {
@@ -52,12 +52,13 @@ const searchSigungu = () => {
 
   let URL = API_URL + searchLocation + uprCd + typeJson;
 
-  const getData = axios
+  const getSigunguData = axios
     .get(URL)
-    .then(res => console.log(res))
+    .then(res => console.log(res.data.response.body.items.item))
     // res.data.response.body.items.item 의 반환 값 예시:
+    // [{uprCd: '6110000', orgCd: '6119999', orgdownNm: '가정보호'}, {uprCd: '6110000', orgCd: '3220000', orgdownNm: '강남구'}]
     .catch(err => console.log(err));
-  // console.log(URL);
+  console.log(URL);
 };
 
 export { searchSido, searchSigungu };
