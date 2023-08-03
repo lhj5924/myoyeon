@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { styled, createGlobalStyle } from "styled-components";
-import Main from "./Pages/Main/Main";
-import List from "./Pages/List/list";
-import Info from "./Pages/Info/Info";
+import { styled, createGlobalStyle, ThemeProvider } from "styled-components";
+import { Main, List, Info } from "./Pages/index";
+import theme from "./Assets/styles/theme";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 
 // * css reset 설정
 const GlobalStyle = createGlobalStyle`
@@ -22,8 +24,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 	line-height: 1;
+
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: 80px; // 헤더 높이만큼 빼주기...다른 방법은 없나?
+  display: flex;
+  transition: background-color 0.5s ease;
+  background-color: ${props => props.theme.bg};
 }
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -74,18 +81,34 @@ const StyledApp = styled.div`
 `;
 
 function App() {
+  const [selectedTheme, setSelectedTheme] = useState(theme.light);
+
+  const themeSelector = () => {
+    selectedTheme === theme.light
+      ? setSelectedTheme(theme.dark)
+      : setSelectedTheme(theme.light);
+    console.log(selectedTheme.main);
+  };
+
   return (
     <>
-      <GlobalStyle />
-      <StyledApp>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/list" element={<List />} />
-            <Route path="/info" element={<Info />} />
-          </Routes>
-        </BrowserRouter>
-      </StyledApp>
+      <ThemeProvider theme={selectedTheme}>
+        <GlobalStyle />
+        <StyledApp>
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route
+                path="/"
+                element={<Main themeSelector={themeSelector} />}
+              />
+              <Route path="/list" element={<List />} />
+              <Route path="/info" element={<Info />} />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+        </StyledApp>
+      </ThemeProvider>
     </>
   );
 }
