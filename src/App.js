@@ -6,6 +6,45 @@ import theme from "./Assets/Styles/theme";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 
+import { RecoilRoot } from "recoil";
+
+function App() {
+  const [selectedTheme, setSelectedTheme] = useState(theme.light);
+
+  const themeSelector = () => {
+    selectedTheme === theme.light
+      ? setSelectedTheme(theme.dark)
+      : setSelectedTheme(theme.light);
+    console.log(selectedTheme.main);
+  };
+
+  return (
+    <>
+      <ThemeProvider theme={selectedTheme}>
+        <GlobalStyle />
+        <RecoilRoot>
+          <StyledApp>
+            <BrowserRouter>
+              <Header />
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Main themeSelector={themeSelector} />}
+                />
+                <Route path="/list" element={<List />} />
+                <Route path="/info" element={<Info />} />
+              </Routes>
+              <Footer />
+            </BrowserRouter>
+          </StyledApp>
+        </RecoilRoot>
+      </ThemeProvider>
+    </>
+  );
+}
+
+export default App;
+
 // * css reset 설정
 const GlobalStyle = createGlobalStyle`
 	/* http://meyerweb.com/eric/tools/css/reset/ 
@@ -79,38 +118,3 @@ q:before, q:after {
 const StyledApp = styled.div`
   text-align: center;
 `;
-
-function App() {
-  const [selectedTheme, setSelectedTheme] = useState(theme.light);
-
-  const themeSelector = () => {
-    selectedTheme === theme.light
-      ? setSelectedTheme(theme.dark)
-      : setSelectedTheme(theme.light);
-    console.log(selectedTheme.main);
-  };
-
-  return (
-    <>
-      <ThemeProvider theme={selectedTheme}>
-        <GlobalStyle />
-        <StyledApp>
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route
-                path="/"
-                element={<Main themeSelector={themeSelector} />}
-              />
-              <Route path="/list" element={<List />} />
-              <Route path="/info" element={<Info />} />
-            </Routes>
-            <Footer />
-          </BrowserRouter>
-        </StyledApp>
-      </ThemeProvider>
-    </>
-  );
-}
-
-export default App;
