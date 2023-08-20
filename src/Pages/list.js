@@ -1,34 +1,104 @@
 import Search from "../Assets/API";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { uprCdAtom, sigunguAtom, orgCdAtom } from "../Atom";
+import {
+  uprCdAtom,
+  sigunguAtom,
+  orgCdAtom,
+  beginDateAtom,
+  endDateAtom,
+  pageNumAtom,
+  shelterAtom,
+  petListAtom,
+  upkindAtom,
+  careAtom,
+} from "../Atom";
 import { styled } from "styled-components";
+import DateChecker from "../Atom/todayDate";
+import PageBtn from "../Components/PageBtn";
 
 const List = () => {
   // 시도 코드 atom 설정
   const [uprCd, setUprCd] = useRecoilState(uprCdAtom);
+  // 시군구 목록 atom 불러오기
+  const sigungu = useRecoilValue(sigunguAtom);
+  // 선택한 시군구 코드
   const [orgCd, setOrgCd] = useRecoilState(orgCdAtom);
-  const SidoOnClickHandler = value => {
+  // 보호소 목록 atom 불러오기
+  const shelter = useRecoilValue(shelterAtom);
+  // 선택한 보호소 코드
+  const [care, setCare] = useRecoilState(careAtom);
+  // 선택한 보호소
+  const petList = useRecoilValue(petListAtom);
+  const SidoOnChangeHandler = value => {
     setUprCd(value);
   };
-  const SigunguOnClickHandler = value => {
+  const SigunguOnChangeHandler = value => {
     setOrgCd(value);
   };
-  // 시군구 목록 atom 설정
-  const sigungu = useRecoilValue(sigunguAtom);
-  // 시군구 리스트 매핑하기
+  const ShelterOnChangeHandler = value => {
+    setCare(value);
+  };
 
-  const { searchSido, searchShelter, searchKind } = Search();
+  const { searchAll } = Search();
 
+  // 날짜 Atom 설정
+  const [beginDate, setBeginDate] = useRecoilState(beginDateAtom);
+  const [endDate, setEndDate] = useRecoilState(endDateAtom);
+  const BeginDateOnChangeHandler = value => {
+    console.log(`beginD : ${value}`);
+    setBeginDate(value);
+  };
+  const EndDateOnChangeHandler = value => {
+    console.log(`endD : ${value}`);
+    setEndDate(value);
+  };
+
+  const [today, before1D, before1M, before3Y] = DateChecker();
+
+  // 현재 pageNum 받아오기
+  const [pageNum, setPageNum] = useRecoilState(pageNumAtom);
+  const pageChangeHandler = value => {
+    // console.log(value);
+    setPageNum(value);
+    console.log(`PageNum : ${value}`);
+  };
+
+  // 축종(개, 고양이, 기타) 선택하기
+  const [upkind, setUpkind] = useRecoilState(upkindAtom);
+  const UpkindOnChangeHandler = value => {
+    setUpkind(value);
+  };
   return (
     <>
       <SearchContainer>
         <SearchBox>
+          <div>
+            <label>시작날짜</label>
+            <input
+              type="date"
+              className="beginDate"
+              value={before1M}
+              min={before3Y}
+              max={before1D}
+              onChange={e => BeginDateOnChangeHandler(e.target.value)}
+            />
+            <label>종료날짜</label>
+            <input
+              type="date"
+              className="endDate"
+              value={today}
+              min={before3Y}
+              max={today}
+              onChange={e => EndDateOnChangeHandler(e.target.value)}
+            />
+          </div>
+          <span>지역 선택</span>
           <Select
             className="sido"
             name="searchUprCd"
             id="searchUprCd"
             title="시도선택"
-            onChange={e => SidoOnClickHandler(e.target.value)}
+            onChange={e => SidoOnChangeHandler(e.target.value)}
           >
             <option value="">전체</option>
             <option value="6110000">서울특별시 </option>
@@ -51,10 +121,10 @@ const List = () => {
           </Select>
           <Select
             className="sigungu"
-            name="searchOrgCd"
-            id="searchOrgCd"
+            name="sigunguCd"
+            id="sigunguCd"
             title="시군구선택"
-            onChange={e => SigunguOnClickHandler(e.target.value)}
+            onChange={e => SigunguOnChangeHandler(e.target.value)}
           >
             <option value="">전체</option>
             {uprCd &&
@@ -64,18 +134,69 @@ const List = () => {
                 </option>
               ))}
           </Select>
-
-          <Select className="care_reg"></Select>
-          <Select className="kind"></Select>
+          <Select
+            className="shelter"
+            name="shelterCd"
+            id="shelterCd"
+            title="보호소선택"
+            onChange={e => ShelterOnChangeHandler(e.target.value)}
+          >
+            <option value="">전체</option>
+            {orgCd &&
+              shelter.map(el => (
+                <option key={el.careRegNo} value={el.careRegNo}>
+                  {el.careNm}
+                </option>
+              ))}
+          </Select>
+          <Select
+            className="upkind"
+            name="upkind"
+            id="upkind"
+            title="축종선택"
+            onChange={e => UpkindOnChangeHandler(e.target.value)}
+          >
+            <option value="">전체</option>
+            <option value="417000">개</option>
+            <option value="422400">고양이</option>
+            <option value="429900">기타</option>
+          </Select>
         </SearchBox>
         <SearchBox>
-          <button>검색</button>
+          <button onClick={searchAll}>검색</button>
         </SearchBox>
       </SearchContainer>
-      <button onClick={searchSido}>searchSido</button>
-      <button onClick={searchShelter}>searchShelter</button>
-      <button onClick={searchKind}>searchKind</button>
-      <div>List</div>
+      <div className="petListContainer">
+        {petList &&
+          petList.map(el => {
+            return (
+              <div key={el.id}>
+                {/* <Img src={el.filename} alt="Thumbnail" /> */}
+                {/* <Img src={el.popfile} alt="Image" /> */}
+                <div>{el.processState}</div>
+                <div>{el.desertionNo}</div>
+                <div>{el.noticeComment}</div>
+                <div>{el.kindCd}</div>
+                <div>{el.processState}</div>
+                <div>{el.sexCd}</div>
+                <div>{el.age}</div>
+                <div>{el.specialMark}</div>
+                <div>{el.weight}</div>
+              </div>
+            );
+          })}
+      </div>
+      <div
+        className="btnContainer"
+        onClick={e => pageChangeHandler(e.target.value)}
+      >
+        <PageBtn value="first" />
+        <PageBtn value="prev" />
+        <PageBtn value="1" />
+        <PageBtn value="2" />
+        <PageBtn value="next" />
+        <PageBtn value="last" />
+      </div>
     </>
   );
 };
@@ -94,3 +215,6 @@ const SearchBox = styled.div`
   background-color: beige;
 `;
 const Select = styled.select``;
+const Img = styled.img`
+  width: 300px;
+`;

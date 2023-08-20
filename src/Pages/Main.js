@@ -1,5 +1,28 @@
 import { styled } from "styled-components";
 
+const Main = ({ themeSelector }) => {
+  return (
+    <>
+      <MainContainer className="MainContainer">
+        <MainP>
+          <button onClick={themeSelector}>dark</button>
+          <span>묘연</span>에서 당신의 인연을 찾아보세요!
+        </MainP>
+        <Test className="Test">
+          <FlexBox>
+            <RandomImg
+              src="https://source.unsplash.com/random/300x300/?cat"
+              alt="cat"
+            />
+          </FlexBox>
+          <MainP>인연을 기다리고 있어요!</MainP>
+        </Test>
+      </MainContainer>
+    </>
+  );
+};
+export default Main;
+
 const MainContainer = styled.div`
   min-height: 100vh;
   min-height: 100dvh;
@@ -41,26 +64,3 @@ const RandomImg = styled.img`
   width: 300px;
   height: 300px;
 `;
-
-const Main = ({ themeSelector }) => {
-  return (
-    <>
-      <MainContainer className="MainContainer">
-        <MainP>
-          <button onClick={themeSelector}>dark</button>
-          <span>묘연</span>에서 당신의 인연을 찾아보세요!
-        </MainP>
-        <Test className="Test">
-          <FlexBox>
-            <RandomImg
-              src="https://source.unsplash.com/random/300x300/?cat"
-              alt="cat"
-            />
-          </FlexBox>
-          <MainP>인연을 기다리고 있어요!</MainP>
-        </Test>
-      </MainContainer>
-    </>
-  );
-};
-export default Main;
