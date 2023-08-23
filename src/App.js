@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { styled, createGlobalStyle, ThemeProvider } from "styled-components";
-import { Main, List, Info } from "./Pages/index";
-import theme from "./Assets/Styles/theme";
-import Header from "./Components/Header";
-import Footer from "./Components/Footer";
-
 import { RecoilRoot } from "recoil";
+import { styled, createGlobalStyle, ThemeProvider } from "styled-components";
+
+import theme from "./Assets/Styles/theme";
+import { Header, Footer, Spinner } from "./Components/index";
+
+const lazyLoad = pageName => lazy(() => import(`./Pages/${pageName}`));
+const Main = lazyLoad("Main");
+const List = lazyLoad("List");
+const Info = lazyLoad("Info");
 
 function App() {
   const [selectedTheme, setSelectedTheme] = useState(theme.light);
@@ -26,14 +29,16 @@ function App() {
           <StyledApp>
             <BrowserRouter>
               <Header />
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Main themeSelector={themeSelector} />}
-                />
-                <Route path="/list" element={<List />} />
-                <Route path="/info" element={<Info />} />
-              </Routes>
+              <Suspense fallback={<Spinner />}>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={<Main themeSelector={themeSelector} />}
+                  />
+                  <Route path="/list" element={<List />} />
+                  <Route path="/info" element={<Info />} />
+                </Routes>
+              </Suspense>
               <Footer />
             </BrowserRouter>
           </StyledApp>
