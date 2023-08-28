@@ -15,51 +15,101 @@ import {
 import { styled } from "styled-components";
 import DateChecker from "../Atom/todayDate";
 import PageBtn from "../Components/PageBtn";
+import { useEffect } from "react";
 
 const List = () => {
-  // 시도 코드 atom 설정
+  // 선택한 시도 코드 atom 설정
   const [uprCd, setUprCd] = useRecoilState(uprCdAtom);
-  // 시군구 목록 atom 불러오기
-  const sigungu = useRecoilValue(sigunguAtom);
-  // 선택한 시군구 코드
+  // 시군구 목록 atom 설정
+  const [sigungu, setSigungu] = useRecoilState(sigunguAtom);
+  // 선택한 시군구 코드 atom 설정
   const [orgCd, setOrgCd] = useRecoilState(orgCdAtom);
-  // 보호소 목록 atom 불러오기
-  const shelter = useRecoilValue(shelterAtom);
+  // 보호소 목록 atom 설정
+  const [shelter, setShelter] = useRecoilState(shelterAtom);
   // 선택한 보호소 코드
   const [care, setCare] = useRecoilState(careAtom);
-  // 선택한 보호소
-  const petList = useRecoilValue(petListAtom);
+  // 검색결과 리스트
+  const [petList, setPetList] = useRecoilState(petListAtom);
+
+  const { searchAll, generateURL, fetchData } = Search();
+
+  const totalCount = 90;
+  // 1. 페이지가 실행될 때 최초로 리스트(petList) 불러오기
+  useEffect(() => {
+    console.log("searchAll 최초 실행");
+    searchAll();
+  }, []);
+
+  // 2-1. 시도 선택
   const SidoOnChangeHandler = value => {
-    setUprCd(value);
+    setUprCd(value); // 선택한 시도 코드를 uprCdAtom 에 넣어주기
+    setOrgCd(""); // 시도 선택 시 시군구 선택 초기화
+    setCare(""); // 시도 선택 시 보호소 선택 초기화
   };
+
+  // 2-2. 시도코드(uprCd)가 변경될 때마다 시군구 목록을 재로딩하기.
+  useEffect(() => {
+    if (uprCd) {
+      // 시군구 목록을 불러와서 sigunguAtom 에 넣어주기
+      const sigunguURL = generateURL("/sigungu");
+      fetchData(sigunguURL, setSigungu);
+    } else {
+      // 시도 전체 선택 시 전체 리스트 불러오기
+      searchAll();
+      console.log("시도 전체");
+    }
+  }, [uprCd]);
+
+  // 3-1. 시군구 선택
   const SigunguOnChangeHandler = value => {
     setOrgCd(value);
+    setCare(""); // 시군구 선택 시 보호소 선택 초기화
   };
+  // 3-2. 시군구코드(orgCd)가 변경될 때마다 보호소 목록을 재로딩하기.
+  useEffect(() => {
+    if (orgCd) {
+      console.log("orgCd : ", orgCd);
+      // if (orgCd && orgCd !== "6119999") {
+      // 가정보호(orgCd === 6119999) 일 경우 에러 발생. 왜? 내용이 없어서?
+      const shelterURL = generateURL("/shelter");
+      fetchData(shelterURL, setShelter, val => {
+        console.log(val);
+      });
+    } else {
+      console.log("검색결과 없음");
+    }
+  }, [orgCd]);
+
   const ShelterOnChangeHandler = value => {
     setCare(value);
   };
-
-  const { searchAll } = Search();
-
+  const [today, before1D, before1M, before3Y] = DateChecker();
   // 날짜 Atom 설정
   const [beginDate, setBeginDate] = useRecoilState(beginDateAtom);
   const [endDate, setEndDate] = useRecoilState(endDateAtom);
   const BeginDateOnChangeHandler = value => {
-    console.log(`beginD : ${value}`);
     setBeginDate(value);
   };
   const EndDateOnChangeHandler = value => {
-    console.log(`endD : ${value}`);
     setEndDate(value);
   };
-
-  const [today, before1D, before1M, before3Y] = DateChecker();
 
   // 현재 pageNum 받아오기
   const [pageNum, setPageNum] = useRecoilState(pageNumAtom);
   const pageChangeHandler = value => {
     // console.log(value);
-    setPageNum(value);
+    if (typeof value === "number") {
+      setPageNum(value);
+    } else if (value === "prev") {
+      setPageNum(pageNum - 1);
+    } else if (value === "next") {
+      setPageNum(pageNum + 1);
+    } else if (value === "first") {
+      setPageNum(1);
+    } else if (value === "last") {
+      setPageNum(Math.ceil(totalCount / 9));
+    }
+
     console.log(`PageNum : ${value}`);
   };
 
@@ -77,7 +127,8 @@ const List = () => {
             <input
               type="date"
               className="beginDate"
-              value={before1M}
+              defaultValue={before1M}
+              value={beginDate}
               min={before3Y}
               max={before1D}
               onChange={e => BeginDateOnChangeHandler(e.target.value)}
@@ -86,19 +137,20 @@ const List = () => {
             <input
               type="date"
               className="endDate"
-              value={today}
+              value={endDate}
               min={before3Y}
               max={today}
               onChange={e => EndDateOnChangeHandler(e.target.value)}
             />
           </div>
-          <span>지역 선택</span>
+          <span>시도</span>
           <Select
             className="sido"
             name="searchUprCd"
-            id="searchUprCd"
             title="시도선택"
-            onChange={e => SidoOnChangeHandler(e.target.value)}
+            onChange={e => {
+              SidoOnChangeHandler(e.target.value);
+            }}
           >
             <option value="">전체</option>
             <option value="6110000">서울특별시 </option>
@@ -119,10 +171,9 @@ const List = () => {
             <option value="6480000">경상남도 </option>
             <option value="6500000">제주특별자치도 </option>
           </Select>
+          <span>시군구</span>
           <Select
             className="sigungu"
-            name="sigunguCd"
-            id="sigunguCd"
             title="시군구선택"
             onChange={e => SigunguOnChangeHandler(e.target.value)}
           >
@@ -134,10 +185,9 @@ const List = () => {
                 </option>
               ))}
           </Select>
+          <span>보호소</span>
           <Select
             className="shelter"
-            name="shelterCd"
-            id="shelterCd"
             title="보호소선택"
             onChange={e => ShelterOnChangeHandler(e.target.value)}
           >
@@ -149,10 +199,9 @@ const List = () => {
                 </option>
               ))}
           </Select>
+          <span>축종</span>
           <Select
             className="upkind"
-            name="upkind"
-            id="upkind"
             title="축종선택"
             onChange={e => UpkindOnChangeHandler(e.target.value)}
           >
@@ -170,19 +219,20 @@ const List = () => {
         {petList &&
           petList.map(el => {
             return (
-              <div key={el.id}>
+              <Card key={el.id}>
                 {/* <Img src={el.filename} alt="Thumbnail" /> */}
                 {/* <Img src={el.popfile} alt="Image" /> */}
                 <div>{el.processState}</div>
-                <div>{el.desertionNo}</div>
-                <div>{el.noticeComment}</div>
+                <div>{el.noticeNo}</div>
+                <div>{el.noticeSdt}</div>
+                <div>{el.noticeEdt}</div>
                 <div>{el.kindCd}</div>
-                <div>{el.processState}</div>
+                <div>{el.careNm}</div>
+                <div>{el.orgNm}</div>
                 <div>{el.sexCd}</div>
                 <div>{el.age}</div>
-                <div>{el.specialMark}</div>
-                <div>{el.weight}</div>
-              </div>
+                <div>{el.neuterYn}</div>
+              </Card>
             );
           })}
       </div>
@@ -217,4 +267,9 @@ const SearchBox = styled.div`
 const Select = styled.select``;
 const Img = styled.img`
   width: 300px;
+`;
+const Card = styled.div`
+  margin: 1rem;
+  background-color: antiquewhite;
+  border: 1px solid salmon;
 `;

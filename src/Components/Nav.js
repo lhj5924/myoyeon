@@ -5,20 +5,56 @@ import { MdMenu, MdMenuOpen } from "react-icons/md";
 
 const NavContainer = styled.div`
   width: 100%;
-  height: 100%;
-  background-color: #fff89a;
+  height: 80px;
+  color: ${props => props.theme.font};
+  background-color: ${props => props.theme.bg};
   display: flex;
   align-items: center;
   justify-content: space-around;
+  position: fixed;
 `;
-const HmbgBtn = styled.button`
-  width: 48px;
-  height: 48px;
-  background-color: #086e7d;
+
+const Btn = styled.button``;
+const HmbgBtn = styled(Btn)``;
+const Ul = styled.ul``;
+const Li = styled.li`
+  margin: 1rem;
+  border: none;
+  transition: 0.3s;
+
+  &::before,
+  &::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: ${props => props.theme.black};
+    opacity: 0;
+    transform: scaleX(0);
+    transition: 0.4s ease-in-out;
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+  }
+
+  &:hover {
+    color: ${props => props.theme.main2};
+    background: transparent;
+
+    &::before,
+    &::after {
+      opacity: 1;
+      transform: scaleX(1.2);
+    }
+  }
 `;
-const Ul = styled.ul`
-  background-color: #fff;
-`;
+
 const HomeBtn = styled.div``;
 
 const Nav = () => {
@@ -42,15 +78,15 @@ const Nav = () => {
             <>
               <MdMenuOpen size={32} />
               <Ul>
-                <li>
+                <Li>
                   <Link to={"/"}>홈</Link>
-                </li>
-                <li>
+                </Li>
+                <Li>
                   <Link to={"list"}>입양 공고 게시판</Link>
-                </li>
-                <li>
+                </Li>
+                <Li>
                   <Link to={"info"}>입양 관련 정보</Link>
-                </li>
+                </Li>
               </Ul>
             </>
           ) : (

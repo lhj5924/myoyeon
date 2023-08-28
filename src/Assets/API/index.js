@@ -51,22 +51,26 @@ function Search() {
   };
 
   const fetchData = async (url, dataSetter) => {
+    console.log("fetch data 진입, uprCd :", uprCd);
+
     try {
       const res = await axios.get(url);
       const data = res.data.response.body.items.item;
-      dataSetter(data);
-      return data;
+      // data 가 빈 배열이 아닌 경우 포함 (&& data.length > 0)
+      data && data.length > 0 && dataSetter(data);
+
+      return dataSetter(data);
     } catch (error) {
       console.error(`Error: ${error}`);
     }
   };
   // useQuery 로 리팩토링 해보기
-  const { data: petListData } = useQuery("petList", fetchData);
+  // const { data: petListData } = useQuery("petList", fetchData);
 
   const searchAll = async () => {
     const petListURL = generateURL("/abandonmentPublic");
-    fetchData(petListURL, setPetList);
-    console.log(petListURL);
+    await fetchData(petListURL, setPetList);
+    console.log("searchAll 함수 : ", petListURL);
   };
   return { searchAll, generateURL, fetchData };
 }
