@@ -2,12 +2,10 @@ import axios from "axios";
 import { useRecoilValue, useRecoilState } from "recoil";
 import {
   uprCdAtom,
-  sigunguAtom,
   orgCdAtom,
   beginDateAtom,
   endDateAtom,
   pageNumAtom,
-  shelterAtom,
   petListAtom,
   upkindAtom,
   careAtom,
@@ -34,7 +32,7 @@ function Search() {
     ...(orgCd && { org_cd: orgCd }),
     ...(beginDate && { bgnde: beginDate.replaceAll("-", "") }),
     ...(endDate && { endde: endDate.replaceAll("-", "") }),
-    numOfRows: 9,
+    numOfRows: 10,
     pageNo: pageNum,
     _type: "json",
     ...(care && { care_reg_no: care }),
@@ -51,8 +49,6 @@ function Search() {
   };
 
   const fetchData = async (url, dataSetter) => {
-    console.log("fetch data 진입, uprCd :", uprCd);
-
     try {
       const res = await axios.get(url);
       const data = res.data.response.body.items.item;
@@ -70,7 +66,6 @@ function Search() {
   const searchAll = async () => {
     const petListURL = generateURL("/abandonmentPublic");
     await fetchData(petListURL, setPetList);
-    console.log("searchAll 함수 : ", petListURL);
   };
   return { searchAll, generateURL, fetchData };
 }

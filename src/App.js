@@ -69,10 +69,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 	line-height: 1;
 
+  width: 100vw;
   min-height: 100vh;
   min-height: 100dvh;
   padding-top: 80px; // 헤더 높이만큼 빼주기...다른 방법은 없나?
   display: flex;
+  justify-content: center;
   transition: background-color 0.5s ease;
   background-color: ${props => props.theme.bg};
 }
