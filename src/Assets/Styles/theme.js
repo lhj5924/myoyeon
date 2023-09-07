@@ -11,11 +11,16 @@ const mediaQuery = {
 };
 const color = {
   // https://colorhunt.co/palette/f6f1e9ffd93dff84004f200d
-  main: `#FFD93D`, // 노랑
-  main2: `#FF8400`, //주황
-  sub: `#4F200D`, //갈색
-  sub2: `#FFF89A`,
+  main: `#00A19D`, // 초록
+  main2: `#FFB344`, //주황
+  sub: `#E05D5D`, //빨강
+  sub2: `#116D6E`, // 딥그린
   bg: `#F6F1E9`, // 베이지
+  // main: `#FFD93D`, // 노랑
+  // main2: `#FF8400`, //주황
+  // sub: `#4F200D`, //갈색
+  // sub2: `#FFF89A`,
+  // bg: `#F6F1E9`, // 베이지
   gray200: `#868e96`,
   gray100: `#adb5bd`,
   gray50: `#dee2e6`,
@@ -46,4 +51,6 @@ const themes = {
     font: `#FF8400`,
   },
 };
+// 사용법
+// color : ${props => props.theme.main};
 export default themes;

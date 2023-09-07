@@ -26,7 +26,7 @@ function App() {
       <ThemeProvider theme={selectedTheme}>
         <GlobalStyle />
         <RecoilRoot>
-          <StyledApp>
+          <StyledApp className="StyledApp">
             <BrowserRouter>
               <Header />
               <Suspense fallback={<Spinner />}>
@@ -123,5 +123,5 @@ q:before, q:after {
 }
 `;
 const StyledApp = styled.div`
-  text-align: center;
+  /* text-align: center; */
 `;

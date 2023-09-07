@@ -10,7 +10,6 @@ import {
   upkindAtom,
   careAtom,
 } from "../../Atom";
-import { useQuery } from "react-query";
 
 function Search() {
   const uprCd = useRecoilValue(uprCdAtom);
@@ -60,8 +59,6 @@ function Search() {
       console.error(`Error: ${error}`);
     }
   };
-  // useQuery 로 리팩토링 해보기
-  // const { data: petListData } = useQuery("petList", fetchData);
 
   const searchAll = async () => {
     const petListURL = generateURL("/abandonmentPublic");

@@ -13,48 +13,48 @@ const Cards = props => {
   };
   return (
     <>
-      <Card>
+      <Card className="Card">
         <ImgBox className="ImgBox">
           <Img src={props.el.popfile} alt="Thumbnail" />
         </ImgBox>
         <InfoBox className="InfoBox">
           <TextBox className="TextBox">
-            <span>공고상태 : </span>
+            <HeadSpan>공고상태 : </HeadSpan>
             <span>{props.el.processState}</span>
           </TextBox>
           <TextBox>
-            <span>공고번호 : </span>
+            <HeadSpan>공고번호 : </HeadSpan>
             <span>{props.el.noticeNo}</span>
           </TextBox>
           <TextBox>
-            <span>접수일자 : </span>
+            <HeadSpan>접수일자 : </HeadSpan>
             <span>{props.el.happenDt}</span>
           </TextBox>
           <TextBox>
-            <span>공고기간 : </span>
+            <HeadSpan>공고기간 : </HeadSpan>
             <span>
               {props.el.noticeSdt}~{props.el.noticeEdt}
             </span>
           </TextBox>
           <TextBox>
-            <span>축종 : </span>
+            <HeadSpan>축종 : </HeadSpan>
             <span>{props.el.kindCd}</span>
           </TextBox>
           <TextBox>
-            <span>성별 : </span>
+            <HeadSpan>성별 : </HeadSpan>
             <span>{props.el.sexCd}</span>
           </TextBox>
           <TextBox>
-            <span>나이 : </span>
+            <HeadSpan>나이 : </HeadSpan>
             <span>{props.el.age}</span>
           </TextBox>
           <TextBox>
-            <span>중성화여부 : </span>
+            <HeadSpan>중성화 : </HeadSpan>
             <span>{neuterCheck(props.el.neuterYn)}</span>
           </TextBox>
           <TextBox>
-            <span>특징 : </span>
-            <span>{props.el.specialMark}</span>
+            <HeadSpan>특징 : </HeadSpan>
+            <MarkSpan>{props.el.specialMark}</MarkSpan>
           </TextBox>
         </InfoBox>
       </Card>
@@ -73,6 +73,9 @@ const Card = styled.section`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  :hover {
+    background-color: aqua;
+  }
 `;
 const Box = styled.div`
   width: 100%;
@@ -101,7 +104,18 @@ const Img = styled.img`
 const InfoBox = styled(Box)`
   height: 50%;
   font-size: 0.75rem;
+  align-items: flex-start;
 `;
 const TextBox = styled.div`
   overflow: hidden;
+  margin: 1px;
+`;
+const HeadSpan = styled.span`
+  font-weight: 600;
+  display: inline-block;
+  width: 70px;
+  margin-left: 0.5rem;
+`;
+const MarkSpan = styled.span`
+  margin-right: 0.5rem;
 `;
