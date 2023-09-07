@@ -1,21 +1,37 @@
 import { styled } from "styled-components";
+import { useState, useEffect } from "react";
+import Skeleton from "../Assets/Styles/Skeleton";
 
 const Cards = props => {
-  // console.log(props.el);
+  // 중성화 완료 여부 체크
   const neuterCheck = neuteCd => {
-    if (neuteCd === "U") {
-      return <span>미상</span>;
-    } else if (neuteCd === "Y") {
-      return <span>완료</span>;
-    } else if (neuteCd === "N") {
-      return <span>미완료</span>;
+    switch (neuteCd) {
+      case "U":
+        return <span>미상</span>;
+      case "Y":
+        return <span>완료</span>;
+      case "N":
+        return <span>미완료</span>;
+      default:
+        return null;
     }
   };
+  // 이미지 로딩 미완료 시 스켈레톤 UI 보여주기
+  const [isLoading, setIsLoading] = useState(true);
+  // useEffect(() => {
+  //   setIsLoading(false);
+  //   console.log(`props.el.popfile`);
+  // }, [props.el.popfile]);
+
   return (
     <>
       <Card className="Card">
         <ImgBox className="ImgBox">
-          <Img src={props.el.popfile} alt="Thumbnail" />
+          {isLoading ? (
+            <Skeleton />
+          ) : (
+            <Img src={props.el.popfile} alt="Thumbnail Image" />
+          )}
         </ImgBox>
         <InfoBox className="InfoBox">
           <TextBox className="TextBox">
